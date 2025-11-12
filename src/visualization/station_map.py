@@ -1,8 +1,16 @@
+import pandas as pd
 import folium
 
-def populate_map_with_stations(map, stations_df):
+def populate_map_with_stations(map: folium.Map, stations_df:pd.DataFrame) -> folium.Map:
     '''
     Create circle markers on the city map where the bike stations are.
+
+    Args:
+        map: A map in which to add markers
+        stations_df: A dataframe with names and locations of stations. Following columns must be present:
+            [lat, lng, name]
+
+    Returns: map with added Circles
 
     TODO: branch where the station size depends on a certain metrics, such as number of bike changes
     '''

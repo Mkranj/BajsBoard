@@ -2,20 +2,30 @@
 
 import pandas as pd
 
-def trim_json_to_locations(json):
+def trim_json_to_locations(json: dict) -> list:
     '''
     Extract the locations array from the raw scraped JSON
 
     Information higher in the hierarchy is unchanging, so we don't need to worry about it in individual files.
+
+    Args:
+        json: a dict made from parsed raw JSON obtained by scraping.
+
+    Returns: list of dicts, each a Bajs location
     '''
     return json["countries"][0]["cities"][0]["places"]
 
-def gather_bajs_locations(loc_list):
+def gather_bajs_locations(loc_list: list[dict]) -> pd.DataFrame:
     '''
     Create a dataframe of all available locations
     
     Takes a list of full location data from `trim_json_to_locations`.
     Under assumption that Bajs locations don't change. If they do, possible upgrade is to take an overlap of multiple such calls. 
+    
+    Args:
+        loc_list: A list of Bajs racks locations, each a dict with name, location, bike info etc.
+
+    Returns: dataframe with each row being a Bajs location
     '''
 
     loc_uid = [loc["uid"] for loc in loc_list]
@@ -23,7 +33,7 @@ def gather_bajs_locations(loc_list):
     loc_lat = [loc["lat"] for loc in loc_list]
     loc_lng = [loc["lng"] for loc in loc_list]
     loc_racks = [loc["bike_racks"] for loc in loc_list]
-    
+
     df = pd.DataFrame({
         "uid": loc_uid,
         "name": loc_name,
