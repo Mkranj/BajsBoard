@@ -1,7 +1,10 @@
 import pandas as pd
 import folium
 
-def populate_map_with_stations(map: folium.Map, stations_df:pd.DataFrame) -> folium.Map:
+def populate_map_with_stations(map: folium.Map,
+    stations_df:pd.DataFrame,
+    metric_size: str|None = None, 
+    metric_tooltip_name: str|None = None) -> folium.Map:
     '''
     Create circle markers on the city map where the bike stations are.
 
@@ -9,16 +12,27 @@ def populate_map_with_stations(map: folium.Map, stations_df:pd.DataFrame) -> fol
         map: A map in which to add markers
         stations_df: A dataframe with names and locations of stations. Following columns must be present:
             [lat, lng, name]
+        metric_size: string, which column to use for calculating circle size? If None, all circles will have an uniform size.
+        metric_tooltip_name: string, text to display before `metric_size` value. Must be provided if `metric_size` isn't None.
 
     Returns: map with added Circles
 
-    TODO: branch where the station size depends on a certain metrics, such as number of bike changes
     '''
 
     for ix in range(stations_df.shape[0]):
+
+        if metric_size is not None:
+            tooltip_text = stations_df["name"].iloc[ix] + "<br>" + metric_tooltip_name + str(stations_df[metric_size].iloc[ix])
+            # Radius the same size as the metric, +1 for locations with 0 changes
+            # TODO scaling - cut into 10 size categories?
+            custom_radius = stations_df[metric_size].iloc[ix] + 1
+        else:
+            tooltip_text = stations_df["name"].iloc[ix]
+            custom_radius = 5
+
         folium.Circle(location = (stations_df["lat"].iloc[ix], stations_df["lng"].iloc[ix]),
-            tooltip = stations_df["name"].iloc[ix],
-            radius = 5,
+            tooltip = tooltip_text,
+            radius = custom_radius,
             fill = True,
             weight = 3,
             opacity = 0.6,
