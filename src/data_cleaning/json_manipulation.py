@@ -1,6 +1,7 @@
 # Functions for working with raw JSON data and transforming it to formats easier to use in further analysis
 
 import pandas as pd
+import numpy as np
 from datetime import datetime
 
 def trim_json_to_locations(json: dict) -> list:
@@ -73,3 +74,32 @@ def get_bikes_in_stations(time: datetime, loc_list: list[dict]) -> pd.DataFrame:
     })
 
     return df
+
+def calculate_bike_changes(earlier_bikes: pd.Series, later_bikes: pd.Series) -> pd.Series:
+    '''
+    Calculate how many bikes changed between two timepoints
+
+    For each point we require a series of lists of bike IDs. 
+    If a bike was present and then left we count that as a change. The same if a bike is now present that wasn't there before.
+    These changes will serve as a measure of a stop's activity.
+    
+    Args:
+        earlier_bikes: a series containing lists of integers, bike IDs
+        later_bikes: a series containing lists of integers, bike IDs
+
+    Returns: series of integers, number of changes between two time points
+    '''
+    changes = []
+    no_changes = earlier_bikes.size
+
+    for ix in range(no_changes):
+        # earliest info will have no "bikes at station previously" so changes can't be calculated
+        if (earlier_bikes[ix] is np.nan or
+            later_bikes[ix] is np.nan):
+            changes.append(np.nan)
+            continue
+        
+        changed_ids  = list(set(earlier_bikes[ix]) ^ set(later_bikes[ix]))
+        changes.append(len(changed_ids))
+
+    return pd.Series(changes)
