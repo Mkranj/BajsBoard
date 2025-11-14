@@ -1,8 +1,24 @@
 # Functions for working with raw JSON data and transforming it to formats easier to use in further analysis
 
+import json
 import pandas as pd
 import numpy as np
 from datetime import datetime
+
+def load_json(filename: str) -> dict:
+    '''
+    Shorthand for loading json from a file.
+
+    Args:
+        filename: JSON file location.
+
+    Returns: dict, parsed JSON
+    '''
+    with open(filename) as json_data:
+        parsed = json.load(json_data)
+        json_data.close()
+    return parsed
+
 
 def trim_json_to_locations(json: dict) -> list:
     '''
