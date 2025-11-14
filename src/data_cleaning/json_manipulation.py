@@ -121,7 +121,9 @@ def calculate_bike_changes(earlier_bikes: pd.Series, later_bikes: pd.Series) -> 
     return pd.Series(changes)
 
 def create_changes_column(location_bikes: pd.DataFrame) -> pd.DataFrame:
-    df = location_bikes
+
+    # Sorting to ensure lags refer to exactly the first earlier observed time
+    df = location_bikes.sort_values(["time", "uid"])
 
     df["lag1_time"] = df.groupby(["uid"])["time"].shift(1)
 
@@ -138,7 +140,9 @@ def create_changes_column(location_bikes: pd.DataFrame) -> pd.DataFrame:
             )
         )
 
-    df["changes"] = calculate_bike_changes(df["bikes_at_station"],
-        df["bikes_at_station_lag1"])
+    df["changes"] = calculate_bike_changes(
+        df["bikes_at_station"],
+        df["bikes_at_station_lag1"]
+        )
 
     return df
