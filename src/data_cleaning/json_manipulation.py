@@ -119,3 +119,26 @@ def calculate_bike_changes(earlier_bikes: pd.Series, later_bikes: pd.Series) -> 
         changes.append(len(changed_ids))
 
     return pd.Series(changes)
+
+def create_changes_column(location_bikes: pd.DataFrame) -> pd.DataFrame:
+    df = location_bikes
+
+    df["lag1_time"] = df.groupby(["uid"])["time"].shift(1)
+
+    df = (
+        df.merge(
+            df.drop(["lag1_time"], axis = 1), # so we don't get this as an additional column after join
+            how = "left",
+            left_on = ["uid", "lag1_time"],
+            right_on = ["uid", "time"],
+            suffixes = (None, "_lag1")
+            )
+            .drop(
+                ["time_lag1"], axis = 1
+            )
+        )
+
+    df["changes"] = calculate_bike_changes(df["bikes_at_station"],
+        df["bikes_at_station_lag1"])
+
+    return df
