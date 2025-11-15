@@ -141,8 +141,8 @@ def create_changes_column(location_bikes: pd.DataFrame) -> pd.DataFrame:
         )
 
     df["changes"] = calculate_bike_changes(
-        df["bikes_at_station"],
-        df["bikes_at_station_lag1"]
+        df["bikes_at_station_lag1"],
+        df["bikes_at_station"]
         )
 
     return df
