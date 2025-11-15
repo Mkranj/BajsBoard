@@ -23,7 +23,7 @@ def populate_map_with_stations(map: folium.Map,
 
     '''
     if metric_size is not None:
-        binned_metric = pd.qcut(stations_df[metric_size], no_bins, list(range(1, no_bins + 1)))
+        binned_metric = pd.cut(stations_df[metric_size], no_bins, labels = list(range(1, no_bins + 1)))
         binned_metric = binned_metric.astype("float")
 
     for ix in range(stations_df.shape[0]):
