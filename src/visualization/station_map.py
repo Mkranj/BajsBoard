@@ -4,9 +4,12 @@ import folium
 def populate_map_with_stations(map: folium.Map,
     stations_df:pd.DataFrame,
     metric_size: str|None = None, 
-    metric_tooltip_name: str|None = None) -> folium.Map:
+    metric_tooltip_name: str|None = None,
+    no_bins: int = 10) -> folium.Map:
     '''
     Create circle markers on the city map where the bike stations are.
+
+    If a metric is added to influence the size of the circles, it will be automatically binned into `no_bins` categories.
 
     Args:
         map: A map in which to add markers
@@ -14,12 +17,13 @@ def populate_map_with_stations(map: folium.Map,
             [lat, lng, name]
         metric_size: string, which column to use for calculating circle size? If None, all circles will have an uniform size.
         metric_tooltip_name: string, text to display before `metric_size` value. Must be provided if `metric_size` isn't None.
+        no_bins: string, text to display before `metric_size` value. Must be provided if `metric_size` isn't None.
 
     Returns: map with added Circles
 
     '''
     if metric_size is not None:
-        binned_metric = pd.qcut(stations_df[metric_size], 10, list(range(1, 10 + 1)))
+        binned_metric = pd.qcut(stations_df[metric_size], no_bins, list(range(1, no_bins + 1)))
         binned_metric = binned_metric.astype("float")
 
     for ix in range(stations_df.shape[0]):
