@@ -91,7 +91,7 @@ def get_bikes_in_stations(time: datetime, loc_list: list[dict]) -> pd.DataFrame:
 
     return df
 
-def calculate_bike_changes(earlier_bikes: pd.Series, later_bikes: pd.Series) -> pd.Series:
+def calculate_bike_changes(earlier_bikes: pd.Series, later_bikes: pd.Series) -> dict[pd.Series]:
     '''
     Calculate how many bikes changed between two timepoints
 
@@ -103,22 +103,41 @@ def calculate_bike_changes(earlier_bikes: pd.Series, later_bikes: pd.Series) -> 
         earlier_bikes: a series containing lists of integers, bike IDs
         later_bikes: a series containing lists of integers, bike IDs
 
-    Returns: series of integers, number of changes between two time points
+    Returns: dictionary {changes, incoming, outgoing}. Each a Series of integers, number of such changes between two time points. "Changes" is combined both incoming and outgoing.
     '''
     changes = []
     no_changes = earlier_bikes.size
 
+    incoming = []
+    outgoing = []
+
     for ix in range(no_changes):
+        earlier_ids = earlier_bikes[ix]
+        later_ids = later_bikes[ix]
+
         # earliest info will have no "bikes at station previously" so changes can't be calculated
-        if (earlier_bikes[ix] is np.nan or
-            later_bikes[ix] is np.nan):
+        if (earlier_ids is np.nan or
+            later_ids is np.nan):
             changes.append(np.nan)
+            incoming.append(np.nan)
+            outgoing.append(np.nan)
             continue
         
-        changed_ids  = list(set(earlier_bikes[ix]) ^ set(later_bikes[ix]))
+        # General changes - any bikes that arrived or left location
+        changed_ids  = list(set(earlier_ids) ^ set(later_ids))
         changes.append(len(changed_ids))
 
-    return pd.Series(changes)
+        is_incoming = [bike not in earlier_ids for bike in later_ids]
+        incoming.append(sum(is_incoming))
+
+        is_outgoing = [bike not in later_ids for bike in earlier_ids]
+        outgoing.append(sum(is_outgoing))
+
+    return {
+        "changes": pd.Series(changes),
+        "incoming": pd.Series(incoming),
+        "outgoing": pd.Series(outgoing)
+    }
 
 def create_changes_column(location_bikes: pd.DataFrame) -> pd.DataFrame:
 
@@ -143,6 +162,6 @@ def create_changes_column(location_bikes: pd.DataFrame) -> pd.DataFrame:
     df["changes"] = calculate_bike_changes(
         df["bikes_at_station_lag1"],
         df["bikes_at_station"]
-        )
+        )["changes"]
 
     return df
