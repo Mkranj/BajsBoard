@@ -24,7 +24,7 @@ def populate_map_with_stations(map: folium.Map,
         if metric_size is not None:
             tooltip_text = stations_df["name"].iloc[ix] + "<br>" + metric_tooltip_name + str(stations_df[metric_size].iloc[ix])
             # Radius depends on the metric
-            custom_radius = stations_df[metric_size].iloc[ix] * 15
+            custom_radius = stations_df[metric_size].iloc[ix] * 5 + stations_df[metric_size].iloc[ix]
         else:
             tooltip_text = stations_df["name"].iloc[ix]
             custom_radius = 5
