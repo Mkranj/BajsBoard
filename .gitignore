@@ -1,3 +1,6 @@
 *.pyc
 *.pyo
 __pycache__/
+
+data/**
+!data/test_JSON_data**
