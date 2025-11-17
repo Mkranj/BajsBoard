@@ -48,11 +48,12 @@ def plot_weekday_bar(station_data: pd.DataFrame, ax: Optional[Axes] = None) -> A
     return ax
 
 def combined_plot_daily_weekly(station_data: pd.DataFrame) -> (Figure, Axes):
-    fig, ax = plt.subplots(nrows = 1, ncols = 2, figsize = (14, 4))
+    fig, ax = plt.subplots(nrows = 1, ncols = 2, figsize = (10, 3))
 
     _ = plot_hourly_bar(station_data, changes_type = "in/out", ax = ax[0])
     _ = plot_weekday_bar(station_data, ax = ax[1])
-
+    
+    plt.close(fig)
     return fig, ax
 
 def stringify_plot(plot: plt.axes):
