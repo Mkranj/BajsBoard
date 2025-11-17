@@ -1,11 +1,16 @@
+from typing import Optional
 import pandas as pd
 import seaborn as sns
-import matplotlib as plt
+import matplotlib.pyplot as plt
+from matplotlib.axes import Axes
 
 import base64
 from io import BytesIO
 
-def plot_hourly_bar(station_data: pd.DataFrame, changes_type: str) -> plt.axes:
+def plot_hourly_bar(station_data: pd.DataFrame, changes_type: str, ax: Optional[Axes] = None) -> Axes:
+    if ax is None:
+        fig, ax = plt.subplots()
+    
     if changes_type == "total":
         columns = ["changes"]
         stack = False
@@ -13,28 +18,33 @@ def plot_hourly_bar(station_data: pd.DataFrame, changes_type: str) -> plt.axes:
         columns = ["incoming", "outgoing"]
         stack = True
 
-    chart = station_data.plot(kind = "bar",
+    station_data.plot(kind = "bar",
         y = columns, 
         stacked = stack, 
-        legend = "reverse")
+        legend = "reverse",
+        ax=ax)
 
-    chart.tick_params(axis = "x", labelrotation=0)
+    ax.tick_params(axis = "x", labelrotation=0)
 
-    return chart
+    return ax
 
-def plot_weekday_bar(station_data: pd.DataFrame) -> plt.axes:
+def plot_weekday_bar(station_data: pd.DataFrame, ax: Optional[Axes] = None) -> Axes:
+    if ax is None:
+        fig, ax = plt.subplots()
+
     columns = ["changes"]
     
-    chart = station_data.plot(kind = "bar",
+    station_data.plot(kind = "bar",
         y = columns, 
         stacked = False,
-        legend = False)
+        legend = False,
+        ax = ax)
 
-    chart.tick_params(axis = "x", labelrotation=0)
-    chart.set_xticklabels(["ponedjeljak", "utorak", "srijeda", "četvrtak", "petak", "subota", "nedjelja"])
-    chart.set_xlabel(None)
+    ax.tick_params(axis = "x", labelrotation=0)
+    ax.set_xticklabels(["ponedjeljak", "utorak", "srijeda", "četvrtak", "petak", "subota", "nedjelja"])
+    ax.set_xlabel(None)
 
-    return chart
+    return ax
 
 def stringify_plot(plot: plt.axes):
     buf = BytesIO()
