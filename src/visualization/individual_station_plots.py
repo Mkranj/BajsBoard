@@ -26,6 +26,9 @@ def plot_hourly_bar(station_data: pd.DataFrame, changes_type: str, ax: Optional[
         ax=ax)
 
     ax.tick_params(axis = "x", labelrotation=0, labelsize=7)
+    ax.set_xlabel(None)
+    ax.set_ylabel("Prosječan broj uporaba u satu")
+    ax.legend(labels = ["Dolazni", "Odlazni"])
 
     return ax
 
@@ -44,6 +47,7 @@ def plot_weekday_bar(station_data: pd.DataFrame, ax: Optional[Axes] = None) -> A
     ax.tick_params(axis = "x", labelrotation=0, labelsize=7)
     ax.set_xticklabels(["ponedjeljak", "utorak", "srijeda", "četvrtak", "petak", "subota", "nedjelja"])
     ax.set_xlabel(None)
+    ax.set_ylabel("Prosječan broj uporaba u danu")
 
     return ax
 
