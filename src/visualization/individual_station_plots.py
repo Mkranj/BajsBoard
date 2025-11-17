@@ -2,6 +2,9 @@ import pandas as pd
 import seaborn as sns
 import matplotlib as plt
 
+import base64
+from io import BytesIO
+
 def plot_hourly_bar(station_data: pd.DataFrame, changes_type: str) -> plt.axes:
     if changes_type == "total":
         columns = ["changes"]
@@ -32,3 +35,16 @@ def plot_weekday_bar(station_data: pd.DataFrame) -> plt.axes:
     chart.set_xlabel(None)
 
     return chart
+
+def stringify_plot(plot: plt.axes):
+    buf = BytesIO()
+    plot.savefig(buf, format='png', bbox_inches='tight')
+    buf.seek(0)
+    encoded = base64.b64encode(buf.read()).decode("utf-8")
+
+    # HTML popup content
+    html = f"""
+    <img src="data:image/png;base64,{encoded}">
+    """
+
+    return html
