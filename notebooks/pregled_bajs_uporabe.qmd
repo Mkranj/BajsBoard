@@ -1,0 +1,161 @@
+---
+execute:
+  echo: false
+
+format:
+  html:
+    embed-resources: true
+    grid: 
+      body-width: 1300px
+---
+
+# Pregled Bajs uporabe
+
+
+```{python}
+import pandas as pd
+import numpy as np
+import json
+import folium
+from datetime import datetime, timedelta
+import os
+import seaborn as sns
+import matplotlib as plt
+import yaml
+
+from data_cleaning.json_manipulation import load_json, trim_json_to_locations, gather_bajs_locations, get_bikes_in_stations, calculate_bike_changes, create_changes_columns
+from visualization.station_map import populate_map_with_stations
+from visualization.individual_station_plots import plot_hourly_bar, plot_weekday_bar, stringify_plot, combined_plot_daily_weekly
+from data_cleaning.data_wrangling import create_hourly_df, create_weekday_df
+```
+
+```{python}
+config = yaml.safe_load(open("../config.YAML"))
+```
+
+Na temelju dohvata javno dostupnih podataka o stanju Bajs stanica u Zagrebu prikazane su najčešće i najrijeđe korištene postaje.
+
+
+```{python}
+raw_files_directory = "../data/" + config["data"]["raw_json_folder"]
+
+raw_files = os.listdir(raw_files_directory)
+```
+
+
+```{python}
+scraped_datetimes = [datetime.strptime(filename[5:-5], "%d-%m-%Y_%H-%M-%S") for filename in raw_files]
+
+# vrijeme prilikom preuzimanja je 1 sat ranije nego aktualno vrijeme u ZG, sređujemo ovdje
+scraped_datetimes = [date + timedelta(hours = 1) for date in scraped_datetimes]
+```
+
+
+```{python}
+data_timepoints = [
+    trim_json_to_locations(load_json(raw_files_directory + "/" + json_file))
+    for json_file
+    in raw_files
+]
+
+bike_data = None
+
+for i in range(len(data_timepoints)):
+    timepoint_bikes = get_bikes_in_stations(time = scraped_datetimes[i],
+        loc_list = data_timepoints[i])
+
+    if i == 0: 
+        bike_data = timepoint_bikes
+    else:
+        bike_data = pd.concat([bike_data, timepoint_bikes])
+```
+
+```{python}
+bike_data = create_changes_columns(bike_data)
+```
+
+
+```{python}
+# Info o postajama, na temelju posljednjeg dohvata podataka
+locations = gather_bajs_locations(data_timepoints[-1])
+```
+
+```{python}
+# Ukupni broj korištenja za svaku stanicu
+
+total_changes = bike_data.groupby("uid").sum(["changes"])
+total_changes = total_changes.rename({"changes":"total_changes"}, axis = 1)
+```
+
+
+```{python}
+locations_changes = locations.join(total_changes, on = "uid")
+locations_changes["weighted_changes"] = locations_changes["total_changes"] / locations_changes["no_racks"]
+```
+
+Najviše korištene postaje:
+
+```{python}
+locations_changes.sort_values("total_changes",  ascending = False).head(10)
+```
+
+Najmanje korištene postaje:
+
+```{python}
+locations_changes.sort_values("total_changes",  ascending = True).head(10)
+```
+
+Najviše korištene postaje s obzirom na broj mjesta za bickle:
+
+```{python}
+locations_changes.sort_values("weighted_changes",  ascending = False).head(10)
+```
+
+## Interaktivna mapa postaja
+
+Prelaskom preko svake postaje prikazuje se zabilježen broj korištenja bicikala. Korištenjem se smatra dolazak bicikla na ovu postaju s neke druge, kao i uzimanje bicikla s ove postaje.
+
+
+```{python}
+hourly = create_hourly_df(bike_data)
+weekdaily = create_weekday_df(bike_data)
+```
+
+
+```{python}
+fig = folium.Figure(width = 1100, height = 500)
+
+m = folium.Map(
+    location=(45.8109, 16.0097),
+    min_zoom=11,
+    tiles = "Esri.WorldTopoMap"
+)
+
+fig.add_child(m)
+
+circles = populate_map_with_stations(m,
+                               locations_changes, 
+                               metric_size = "total_changes", 
+                               metric_tooltip_name = "Ukupno korištenja bicikala: ",
+                               no_bins = 12)
+```
+
+
+```{python}
+for i in range(len(circles)):
+    circ = circles[i]
+
+    station_uid = locations_changes["uid"].iloc[i]
+
+    circ.add_child(folium.Popup(stringify_plot(
+        combined_plot_daily_weekly(hourly.loc[station_uid], weekdaily.loc[station_uid])[0]
+        )))
+
+_ = [circ.add_to(m) for circ in circles]
+```
+
+
+```{python}
+#| body-width: 100%
+m
+```
