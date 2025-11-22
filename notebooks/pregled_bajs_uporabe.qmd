@@ -109,27 +109,40 @@ locations_changes["weighted_changes"] = locations_changes["daily_avg"] / locatio
 ```
 
 ```{python}
+
 # zaokruži na dvije decimale za prikaz u tablicama i na karti
 locations_changes["daily_avg"] = np.round(locations_changes["daily_avg"], 2)
 locations_changes["weighted_changes"] = np.round(locations_changes["weighted_changes"], 2)
+```
+```{python}
+# tablice za prikaz - izmjene u nazivima stupaca
+postaje_prikaz = locations_changes
+postaje_prikaz = postaje_prikaz.rename(columns={
+    "name" : "Ime postaje",
+    "no_racks" : "Mjesta za bickle",
+    "daily_avg" : "Korištenja dnevno",
+    "weighted_changes" : "Dnevno korištenja po mjestu za bicikle"
+})
+
+postaje_prikaz = postaje_prikaz[["Ime postaje", "Mjesta za bickle", "Korištenja dnevno", "Dnevno korištenja po mjestu za bicikle"]]
 ```
 
 Najviše korištene postaje:
 
 ```{python}
-locations_changes.sort_values("daily_avg",  ascending = False).head(10)
+postaje_prikaz.sort_values("Korištenja dnevno",  ascending = False).head(10)
 ```
 
 Najmanje korištene postaje:
 
 ```{python}
-locations_changes.sort_values("daily_avg",  ascending = True).head(10)
+postaje_prikaz.sort_values("Korištenja dnevno",  ascending = True).head(10)
 ```
 
 Najviše korištene postaje s obzirom na broj mjesta za bickle:
 
 ```{python}
-locations_changes.sort_values("weighted_changes",  ascending = False).head(10)
+postaje_prikaz.sort_values("Dnevno korištenja po mjestu za bicikle",  ascending = False).head(10)
 ```
 
 ## Ukupno korištenje Bajseva
