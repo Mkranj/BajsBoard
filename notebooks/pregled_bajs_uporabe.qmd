@@ -108,6 +108,12 @@ locations_changes["daily_avg"] = locations_changes["total_changes"] / no_days
 locations_changes["weighted_changes"] = locations_changes["daily_avg"] / locations_changes["no_racks"]
 ```
 
+```{python}
+# zaokruži na dvije decimale za prikaz u tablicama i na karti
+locations_changes["daily_avg"] = np.round(locations_changes["daily_avg"], 2)
+locations_changes["weighted_changes"] = np.round(locations_changes["weighted_changes"], 2)
+```
+
 Najviše korištene postaje:
 
 ```{python}
@@ -125,6 +131,22 @@ Najviše korištene postaje s obzirom na broj mjesta za bickle:
 ```{python}
 locations_changes.sort_values("weighted_changes",  ascending = False).head(10)
 ```
+
+## Ukupno korištenje Bajseva
+
+```{python}
+# ukupni izračuni za sve postaje zajedno
+ukupno_koristenja_po_danu = np.sum(locations_changes["total_changes"])
+ukupno_postaja = locations_changes.shape[0]
+ukupno_mjesta_za_bicikle = np.sum(locations_changes["no_racks"])
+
+dnevni_prosjek_koristenja = ukupno_koristenja_po_danu / no_days
+dnevni_prosjek_po_postaji = dnevni_prosjek_koristenja / ukupno_postaja
+dnevni_prosjek_po_mjestu_za_bajs = dnevni_prosjek_koristenja / ukupno_mjesta_za_bicikle
+```
+
+Gledajući ukupno korištenje Bajseva za sve postaje u Zagrebu, prosječno se bajsevi dnevno koriste `{python} int(dnevni_prosjek_koristenja)` puta. Postavljeno je `{python} int(ukupno_postaja)` postaja s ukupno `{python} int(ukupno_mjesta_za_bicikle)` mjesta za bicikle.  
+Prosječno se na svakoj postaji bajsovi koriste `{python} round(float(dnevni_prosjek_po_postaji),2)` puta dnevno, odnosno `{python} round(float(dnevni_prosjek_po_mjestu_za_bajs),2)` puta dnevno po svakom mjestu (engl. *rack*) za bicikle.
 
 ## Interaktivna mapa postaja
 
