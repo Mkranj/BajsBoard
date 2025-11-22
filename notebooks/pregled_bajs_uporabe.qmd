@@ -57,7 +57,10 @@ data_timepoints = [
     for json_file
     in raw_files
 ]
+```
 
+```{python}
+# Formatting everything into a single dataframe
 bike_data = None
 
 for i in range(len(data_timepoints)):
@@ -69,10 +72,19 @@ for i in range(len(data_timepoints)):
     else:
         bike_data = pd.concat([bike_data, timepoint_bikes])
 ```
-
 ```{python}
 bike_data = create_changes_columns(bike_data)
 ```
+
+```{python}
+dates = bike_data["time"].sort_values()
+first_date = datetime.date(dates.iloc[0])
+last_date = datetime.date(dates.iloc[-1])
+
+no_days = (last_date - first_date).days
+```
+
+Podaci su prikupljeni u razdoblju od `{python} first_date.strftime("%d.%m.%Y.")` do `{python} last_date.strftime("%d.%m.%Y.")`, što obuhvaća ukupno `{python} no_days` dana.
 
 
 ```{python}
@@ -89,20 +101,23 @@ total_changes = total_changes.rename({"changes":"total_changes"}, axis = 1)
 
 
 ```{python}
+# Prosječni broj korištenja po danu, + težinski prosjek s obzirom na broj mjesta za bicikle
+
 locations_changes = locations.join(total_changes, on = "uid")
-locations_changes["weighted_changes"] = locations_changes["total_changes"] / locations_changes["no_racks"]
+locations_changes["daily_avg"] = locations_changes["total_changes"] / no_days
+locations_changes["weighted_changes"] = locations_changes["daily_avg"] / locations_changes["no_racks"]
 ```
 
 Najviše korištene postaje:
 
 ```{python}
-locations_changes.sort_values("total_changes",  ascending = False).head(10)
+locations_changes.sort_values("daily_avg",  ascending = False).head(10)
 ```
 
 Najmanje korištene postaje:
 
 ```{python}
-locations_changes.sort_values("total_changes",  ascending = True).head(10)
+locations_changes.sort_values("daily_avg",  ascending = True).head(10)
 ```
 
 Najviše korištene postaje s obzirom na broj mjesta za bickle:
@@ -135,8 +150,8 @@ fig.add_child(m)
 
 circles = populate_map_with_stations(m,
                                locations_changes, 
-                               metric_size = "total_changes", 
-                               metric_tooltip_name = "Ukupno korištenja bicikala: ",
+                               metric_size = "daily_avg", 
+                               metric_tooltip_name = "Prosječno dnevno korištenje bicikala: ",
                                no_bins = 12)
 ```
 
