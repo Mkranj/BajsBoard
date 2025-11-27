@@ -33,9 +33,6 @@ from data_cleaning.data_wrangling import create_hourly_df, create_weekday_df
 config = yaml.safe_load(open("../config.YAML"))
 ```
 
-Na temelju dohvata javno dostupnih podataka o stanju Bajs stanica u Zagrebu prikazane su najčešće i najrijeđe korištene postaje.
-
-
 ```{python}
 raw_files_directory = "../data/" + config["data"]["raw_json_folder"]
 
@@ -84,9 +81,6 @@ last_date = datetime.date(dates.iloc[-1])
 no_days = (last_date - first_date).days
 ```
 
-Podaci su prikupljeni u razdoblju od `{python} first_date.strftime("%d.%m.%Y.")` do `{python} last_date.strftime("%d.%m.%Y.")`, što obuhvaća ukupno `{python} no_days` dana.
-
-
 ```{python}
 # Info o postajama, na temelju posljednjeg dohvata podataka
 locations = gather_bajs_locations(data_timepoints[-1])
@@ -114,6 +108,29 @@ locations_changes["weighted_changes"] = locations_changes["daily_avg"] / locatio
 locations_changes["daily_avg"] = np.round(locations_changes["daily_avg"], 2)
 locations_changes["weighted_changes"] = np.round(locations_changes["weighted_changes"], 2)
 ```
+
+```{python}
+# ukupni izračuni za sve postaje zajedno
+ukupno_koristenja_po_danu = np.sum(locations_changes["total_changes"])
+ukupno_postaja = locations_changes.shape[0]
+ukupno_mjesta_za_bicikle = np.sum(locations_changes["no_racks"])
+
+dnevni_prosjek_koristenja = ukupno_koristenja_po_danu / no_days
+dnevni_prosjek_po_postaji = dnevni_prosjek_koristenja / ukupno_postaja
+dnevni_prosjek_po_mjestu_za_bajs = dnevni_prosjek_koristenja / ukupno_mjesta_za_bicikle
+```
+
+Na temelju dohvata javno dostupnih podataka o stanju Bajs stanica u Zagrebu provedena je analiza kako bi se utvrdili obrasci o korištenju Bajs bicikala. Podaci su prikupljeni u razdoblju od `{python} first_date.strftime("%d.%m.%Y.")` do `{python} last_date.strftime("%d.%m.%Y.")`, što obuhvaća ukupno `{python} no_days` dana.  
+U trenutku provođenja analize u Zagrebu je bilo postavljeno `{python} int(ukupno_postaja)` postaja. U ovom dokumentu prikazat će se podaci o ukupnom korištenju bicikala, izdvojene stanice, te interaktivna karta s pregledom popularnosti stanica te opaženih trendova korištenja kroz sate u danu i dane u tjednu.
+
+## Ukupno korištenje Bajseva
+
+
+Gledajući ukupno korištenje Bajseva za sve postaje u Zagrebu, prosječno se bajsevi dnevno koriste `{python} int(dnevni_prosjek_koristenja)` puta. Postavljeno je `{python} int(ukupno_postaja)` postaja s ukupno `{python} int(ukupno_mjesta_za_bicikle)` mjesta za bicikle.  
+Prosječno se na svakoj postaji bajsovi koriste `{python} round(float(dnevni_prosjek_po_postaji),2)` puta dnevno, odnosno `{python} round(float(dnevni_prosjek_po_mjestu_za_bajs),2)` puta dnevno po svakom mjestu (engl. *rack*) za bicikle.
+
+## Postaje  
+
 ```{python}
 # tablice za prikaz - izmjene u nazivima stupaca
 postaje_prikaz = locations_changes
@@ -127,17 +144,15 @@ postaje_prikaz = postaje_prikaz.rename(columns={
 postaje_prikaz = postaje_prikaz[["Ime postaje", "Mjesta za bickle", "Korištenja dnevno", "Dnevno korištenja po mjestu za bicikle"]]
 ```
 
+U nastavku su navedene tri tablice s podacima o postajama. Kao kratki pregled aktivnosti cijelog sustava zanimljivo je vidjeti koje su postaje najaktivnije.  
+
 Najviše korištene postaje:
 
 ```{python}
 postaje_prikaz.sort_values("Korištenja dnevno",  ascending = False).head(10)
 ```
 
-Najmanje korištene postaje:
-
-```{python}
-postaje_prikaz.sort_values("Korištenja dnevno",  ascending = True).head(10)
-```
+Još jedan oblik aktivnosti je prosječan dnevni broj korištenja podijeljen s brojem mjesta za bicikle na određenoj postaji. Visok rezultat na ovoj mjeri može označavati da su određene postaje prenapučene, odnosno da je potražnja za Bajs biciklima potencijalno veća nego što ponuđeni broj dostupnih bicikala trenutno može zadovoljiti. Te stanice su potencijalni kandidati za proširenje povećanjem broja dostupnih bicikala.   
 
 Najviše korištene postaje s obzirom na broj mjesta za bickle:
 
@@ -145,21 +160,13 @@ Najviše korištene postaje s obzirom na broj mjesta za bickle:
 postaje_prikaz.sort_values("Dnevno korištenja po mjestu za bicikle",  ascending = False).head(10)
 ```
 
-## Ukupno korištenje Bajseva
+U sljedećoj tablici navedene su postaje na kojima je zabilježena najmanja aktivnost. Za ove je postaje korisno istražiti koji su mogući uzroci manjka aktivnosti. Neki su očekivani i na njih se ne može sustavno utjecati; na primjer, postaje u područjima male gustoće naseljenosti vjerojatno će imati i manji broj korištenja od onih gdje veći broj ljudi obitava ili radi. Mogući su i uzroci na koje se može utjecati izmjenama u sustavu Bajsa; na primjer, moguće je da su određene postaje fizički previše udaljene od svojih prvih susjeda pa stanovnicima nije praktično uskladiti svoje svakodnevne rute oko dostupnih postaja.
+
+Najmanje korištene postaje:
 
 ```{python}
-# ukupni izračuni za sve postaje zajedno
-ukupno_koristenja_po_danu = np.sum(locations_changes["total_changes"])
-ukupno_postaja = locations_changes.shape[0]
-ukupno_mjesta_za_bicikle = np.sum(locations_changes["no_racks"])
-
-dnevni_prosjek_koristenja = ukupno_koristenja_po_danu / no_days
-dnevni_prosjek_po_postaji = dnevni_prosjek_koristenja / ukupno_postaja
-dnevni_prosjek_po_mjestu_za_bajs = dnevni_prosjek_koristenja / ukupno_mjesta_za_bicikle
+postaje_prikaz.sort_values("Korištenja dnevno",  ascending = True).head(10)
 ```
-
-Gledajući ukupno korištenje Bajseva za sve postaje u Zagrebu, prosječno se bajsevi dnevno koriste `{python} int(dnevni_prosjek_koristenja)` puta. Postavljeno je `{python} int(ukupno_postaja)` postaja s ukupno `{python} int(ukupno_mjesta_za_bicikle)` mjesta za bicikle.  
-Prosječno se na svakoj postaji bajsovi koriste `{python} round(float(dnevni_prosjek_po_postaji),2)` puta dnevno, odnosno `{python} round(float(dnevni_prosjek_po_mjestu_za_bajs),2)` puta dnevno po svakom mjestu (engl. *rack*) za bicikle.
 
 ## Interaktivna mapa postaja
 
@@ -213,5 +220,6 @@ m
 # Ograničenja
 Podaci za ovaj izvještaj dohvaćaju se na razini jednog sata. Zbog toga se ne bilježe apsolutne sve promjene u lokaciji bicikala unutar pojedinog sata. Drugim riječima, stvaran broj korištenja bicikala je vjerojatno **veći** od onog navedenog u ovom dokumentu.  
 Ipak, osnovna namjena ove analize je prikazati trendove korištenja, a oni su vrlo vjerojatno postojani čak i ako se podaci ne dohvaćaju u realnom vremenu. Informacije o tome koje su stanice najviše i najmanje korištene, koji sati ili dani u tjednu pokazuju najveću aktivnost vrlo vjerojatno ne bi bile drugačije uz veću razinu detalja pri prikupljanju podataka.  
+
 Ono što se mijenja je apsolutni broj korištenja: Možda za neku stanicu ovako zabilježimo da se koristi 100 puta dnevno, a stvarno stanje je 130 jer je u nekim satima isti bicikl dovezen na stanicu i odmah preuzet i odvezen dalje.  
 Ova pristranost je manja za manje korištene stanice: Ako su veći broj sati zaredom opaženi isti bicikli na istoj stanici znači da tu nije došlo do nikakvih promjena, te bi to vrijedilo jednako i da se podaci dohvaćaju mnogo češće od jednom na sat.  
