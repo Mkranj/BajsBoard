@@ -20,7 +20,7 @@ import folium
 from datetime import datetime, timedelta
 import os
 import seaborn as sns
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import yaml
 
 from data_cleaning.json_manipulation import load_json, trim_json_to_locations, gather_bajs_locations, get_bikes_in_stations, calculate_bike_changes, create_changes_columns
@@ -128,6 +128,27 @@ U trenutku provođenja analize u Zagrebu je bilo postavljeno `{python} int(ukupn
 
 Gledajući ukupno korištenje Bajseva za sve postaje u Zagrebu, prosječno se bajsevi dnevno koriste `{python} int(dnevni_prosjek_koristenja)` puta. Postavljeno je `{python} int(ukupno_postaja)` postaja s ukupno `{python} int(ukupno_mjesta_za_bicikle)` mjesta za bicikle.  
 Prosječno se na svakoj postaji bajsovi koriste `{python} round(float(dnevni_prosjek_po_postaji),2)` puta dnevno, odnosno `{python} round(float(dnevni_prosjek_po_mjestu_za_bajs),2)` puta dnevno po svakom mjestu (engl. *rack*) za bicikle.
+
+
+U nastavku je prikazan prosječan broj korištenja po satima u danu, po čemu se mogu vidjeti razdoblja najveće i najmanje aktivnosti. Stupac kod određenog sata znači da se u razdoblju od sat vremena unatrag opazilo toliko korištenja (npr. stupac kod sata 10 označava razdoblje 9:01-10:00).  
+
+```{python}
+#| fig-align: "center"
+po_satu = create_hourly_df(bike_data).groupby(["hour"]).sum()
+
+po_danu = create_weekday_df(bike_data).groupby(["wday"]).sum()
+
+_ = plot_hourly_bar(po_satu, changes_type = "total")
+```
+
+Na sljedećoj slici prikazane su varijacije u korištenju bicikala ovisno o danu u tjednu.
+
+```{python}
+#| fig-align: "center"
+_ = plot_weekday_bar(po_danu)
+```
+
+Pri kraju dokumenta nalazi se interaktivna mapa postaja na kojoj je klikom na određenu postaju moguće dobiti ovakve grafikone napravljene specifično za nju. Tako je moguće vidjeti trendove korištenja upravo za one relacije koje su čitatelju najrelevantnije.  
 
 ## Postaje  
 

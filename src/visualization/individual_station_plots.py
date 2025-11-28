@@ -58,7 +58,7 @@ def combined_plot_daily_weekly(station_data_hourly: pd.DataFrame, station_data_d
     _ = plot_weekday_bar(station_data_daily, ax = ax[1])
     
     plt.close(fig)
-    return fig, ax
+    return (fig, ax)
 
 def stringify_plot(plot: plt.axes):
     buf = BytesIO()
