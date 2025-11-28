@@ -111,11 +111,10 @@ locations_changes["weighted_changes"] = np.round(locations_changes["weighted_cha
 
 ```{python}
 # ukupni izračuni za sve postaje zajedno
-ukupno_koristenja_po_danu = np.sum(locations_changes["total_changes"])
+dnevni_prosjek_koristenja = np.sum(locations_changes["daily_avg"])
 ukupno_postaja = locations_changes.shape[0]
 ukupno_mjesta_za_bicikle = np.sum(locations_changes["no_racks"])
 
-dnevni_prosjek_koristenja = ukupno_koristenja_po_danu / no_days
 dnevni_prosjek_po_postaji = dnevni_prosjek_koristenja / ukupno_postaja
 dnevni_prosjek_po_mjestu_za_bajs = dnevni_prosjek_koristenja / ukupno_mjesta_za_bicikle
 ```
