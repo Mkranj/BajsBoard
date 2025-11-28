@@ -1,7 +1,7 @@
 # BajsBoard
 
 Analiza podataka o uporabi Bajs bicikala u Zagrebu.  
-Provedena analiza i interaktivna karta s postajama mogu se pregledati na ovoj [poveznici](https://mkranj.github.io/BajsBoard/pregled_bajs_uporabe.html).
+Provedena analiza i interaktivna karta s postajama mogu se pregledati na [**ovoj poveznici**](https://mkranj.github.io/BajsBoard/pregled_bajs_uporabe.html).
 
 ## Opis projekta  
 
