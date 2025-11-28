@@ -87,7 +87,7 @@ locations = gather_bajs_locations(data_timepoints[-1])
 ```
 
 ```{python}
-# Ukupni broj korištenja za svaku stanicu
+# Ukupni broj korištenja za svaku postaju
 
 total_changes = bike_data.groupby("uid").sum(["changes"])
 total_changes = total_changes.rename({"changes":"total_changes"}, axis = 1)
@@ -119,8 +119,8 @@ dnevni_prosjek_po_postaji = dnevni_prosjek_koristenja / ukupno_postaja
 dnevni_prosjek_po_mjestu_za_bajs = dnevni_prosjek_koristenja / ukupno_mjesta_za_bicikle
 ```
 
-Na temelju dohvata javno dostupnih podataka o stanju Bajs stanica u Zagrebu provedena je analiza kako bi se utvrdili obrasci o korištenju Bajs bicikala. Podaci su prikupljeni u razdoblju od `{python} first_date.strftime("%d.%m.%Y.")` do `{python} last_date.strftime("%d.%m.%Y.")`, što obuhvaća ukupno `{python} no_days` dana.  
-U trenutku provođenja analize u Zagrebu je bilo postavljeno `{python} int(ukupno_postaja)` postaja. U ovom dokumentu prikazat će se podaci o ukupnom korištenju bicikala, izdvojene stanice, te interaktivna karta s pregledom popularnosti stanica te opaženih trendova korištenja kroz sate u danu i dane u tjednu.
+Na temelju dohvata javno dostupnih podataka o stanju Bajs postaja u Zagrebu provedena je analiza kako bi se utvrdili obrasci o korištenju Bajs bicikala. Podaci su prikupljeni u razdoblju od `{python} first_date.strftime("%d.%m.%Y.")` do `{python} last_date.strftime("%d.%m.%Y.")`, što obuhvaća ukupno `{python} no_days` dana.  
+U trenutku provođenja analize u Zagrebu je bilo postavljeno `{python} int(ukupno_postaja)` postaja. U ovom dokumentu prikazat će se podaci o ukupnom korištenju bicikala, izdvojene postaje, te interaktivna karta s pregledom popularnosti postaja te opaženih trendova korištenja kroz sate u danu i dane u tjednu.
 
 ## Ukupno korištenje Bajseva
 
@@ -172,7 +172,7 @@ Najviše korištene postaje:
 postaje_prikaz.sort_values("Korištenja dnevno",  ascending = False).head(10)
 ```
 
-Još jedan oblik aktivnosti je prosječan dnevni broj korištenja podijeljen s brojem mjesta za bicikle na određenoj postaji. Visok rezultat na ovoj mjeri može označavati da su određene postaje prenapučene, odnosno da je potražnja za Bajs biciklima potencijalno veća nego što ponuđeni broj dostupnih bicikala trenutno može zadovoljiti. Te stanice su potencijalni kandidati za proširenje povećanjem broja dostupnih bicikala.   
+Još jedan oblik aktivnosti je prosječan dnevni broj korištenja podijeljen s brojem mjesta za bicikle na određenoj postaji. Visok rezultat na ovoj mjeri može označavati da su određene postaje prenapučene, odnosno da je potražnja za Bajs biciklima potencijalno veća nego što ponuđeni broj dostupnih bicikala trenutno može zadovoljiti. Te su postaje potencijalni kandidati za proširenje povećanjem broja dostupnih bicikala.   
 
 Najviše korištene postaje s obzirom na broj mjesta za bickle:
 
@@ -190,7 +190,8 @@ postaje_prikaz.sort_values("Korištenja dnevno",  ascending = True).head(10)
 
 ## Interaktivna mapa postaja
 
-Prelaskom preko svake postaje prikazuje se zabilježen broj korištenja bicikala. Korištenjem se smatra dolazak bicikla na ovu postaju s neke druge, kao i uzimanje bicikla s ove postaje.
+Prelaskom preko svake postaje prikazuje se zabilježen broj korištenja bicikala i broj mjesta za bicikle. Klikom na postaju prikazuju se grafikoni s informacijama o prosječnom korištenju za svaki sat u danu i za svaki dan u tjednu.  
+Korištenjem se smatra dolazak bicikla na ovu postaju s neke druge ("*Dolazni*" u grafikonu), kao i uzimanje bicikla s ove postaje ("*Odlazni*" u grafikonu).
 
 
 ```{python}
@@ -238,8 +239,8 @@ m
 ```
 
 # Ograničenja
-Podaci za ovaj izvještaj dohvaćaju se na razini jednog sata. Zbog toga se ne bilježe apsolutne sve promjene u lokaciji bicikala unutar pojedinog sata. Drugim riječima, stvaran broj korištenja bicikala je vjerojatno **veći** od onog navedenog u ovom dokumentu.  
-Ipak, osnovna namjena ove analize je prikazati trendove korištenja, a oni su vrlo vjerojatno postojani čak i ako se podaci ne dohvaćaju u realnom vremenu. Informacije o tome koje su stanice najviše i najmanje korištene, koji sati ili dani u tjednu pokazuju najveću aktivnost vrlo vjerojatno ne bi bile drugačije uz veću razinu detalja pri prikupljanju podataka.  
+Podaci za ovaj dokument dohvaćaju se na razini jednog sata. Zbog toga se ne bilježe sve promjene u lokaciji bicikala unutar pojedinog sata. Drugim riječima, stvaran broj korištenja bicikala je vjerojatno **veći** od onog navedenog u ovom dokumentu.  
+Ipak, osnovna namjena ove analize je prikazati trendove korištenja, a oni su vrlo vjerojatno postojani čak i ako se podaci ne dohvaćaju u realnom vremenu. Informacije o tome koje su postaje najviše i najmanje korištene te koji sati ili dani u tjednu pokazuju najveću aktivnost vrlo vjerojatno ne bi bile drugačije uz veću razinu detalja pri prikupljanju podataka.  
 
-Ono što se mijenja je apsolutni broj korištenja: Možda za neku stanicu ovako zabilježimo da se koristi 100 puta dnevno, a stvarno stanje je 130 jer je u nekim satima isti bicikl dovezen na stanicu i odmah preuzet i odvezen dalje.  
-Ova pristranost je manja za manje korištene stanice: Ako su veći broj sati zaredom opaženi isti bicikli na istoj stanici znači da tu nije došlo do nikakvih promjena, te bi to vrijedilo jednako i da se podaci dohvaćaju mnogo češće od jednom na sat.  
+Ono što se mijenja je apsolutni broj korištenja: Možda se za neku postaju trenutno navodi da se koristi 100 puta dnevno, a stvarno stanje je 130 jer je u nekim satima isti bicikl dovezen na postaju i odmah preuzet i odvezen dalje.  
+Ova pristranost je manja za manje korištene postaje: Ako su veći broj sati zaredom opaženi isti bicikli na istoj postaji znači da tu nije došlo do nikakvih promjena, te bi to vrijedilo jednako i da se podaci dohvaćaju mnogo češće od jednom na sat.  
