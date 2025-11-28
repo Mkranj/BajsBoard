@@ -24,5 +24,6 @@ where = ["src"]
 
 [dependency-groups]
 dev = [
+    "ipykernel>=7.1.0",
     "nbconvert>=7.16.6",
 ]

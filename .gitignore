@@ -4,3 +4,5 @@ __pycache__/
 
 data/**
 !data/test_JSON_data**
+/.quarto/
+/.venv/
