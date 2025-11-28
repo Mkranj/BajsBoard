@@ -215,7 +215,7 @@ circles = populate_map_with_stations(m,
                                locations_changes, 
                                metric_size = "daily_avg", 
                                metric_tooltip_name = "Prosječno dnevno korištenje bicikala: ",
-                               no_bins = 12)
+                               no_bins = 35)
 ```
 
 
