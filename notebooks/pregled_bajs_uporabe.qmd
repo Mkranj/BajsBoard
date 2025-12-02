@@ -125,6 +125,8 @@ dnevni_prosjek_po_mjestu_za_bajs = dnevni_prosjek_koristenja / ukupno_mjesta_za_
 Na temelju dohvata javno dostupnih podataka o stanju Bajs postaja u Zagrebu provedena je analiza kako bi se utvrdili obrasci o korištenju Bajs bicikala. Podaci su prikupljeni u razdoblju od `{python} first_date.strftime("%d.%m.%Y.")` do `{python} last_date.strftime("%d.%m.%Y.")`, što obuhvaća ukupno `{python} no_days` dana.  
 U trenutku provođenja analize u Zagrebu je bilo postavljeno `{python} int(ukupno_postaja)` postaja. U ovom dokumentu prikazat će se podaci o ukupnom korištenju bicikala, izdvojene postaje, te interaktivna karta s pregledom popularnosti postaja te opaženih trendova korištenja kroz sate u danu i dane u tjednu.
 
+Pojam "*korištenje*" bicikla ovdje označava da je bicikl bio odvezen sa određene postaje. Dolasci na postaju se prikazuju samo u određenim dijelovima dokumenta, poput prikaza prosječne aktivnosti postaja po satima u danu u interaktivnoj mapi.
+
 ## Ukupno korištenje Bajseva
 
 
@@ -193,8 +195,8 @@ postaje_prikaz.sort_values("Korištenja dnevno",  ascending = True).head(10)
 
 ## Interaktivna mapa postaja
 
-Prelaskom preko svake postaje prikazuje se zabilježen broj korištenja bicikala i broj mjesta za bicikle. Klikom na postaju prikazuju se grafikoni s informacijama o prosječnom korištenju za svaki sat u danu i za svaki dan u tjednu.  
-Korištenjem se smatra dolazak bicikla na ovu postaju s neke druge ("*Dolazni*" u grafikonu), kao i uzimanje bicikla s ove postaje ("*Odlazni*" u grafikonu).
+Prelaskom preko svake postaje prikazuje se prosječni dnevni broj korištenja bicikala i broj mjesta za bicikle. Klikom na postaju prikazuju se grafikoni s informacijama o prosječnom korištenju za svaki sat u danu i za svaki dan u tjednu.  
+Kod prikaza po satima moguće je vidjeti broj korištenja bicikala s ove postaje ("*Odlazni*" u grafikonu), kao i kada se najviše bicikala ostavlja na ovoj postaji ("*Dolazni*" u grafikonu).  
 
 
 ```{python}
