@@ -170,3 +170,35 @@ def create_changes_columns(location_bikes: pd.DataFrame) -> pd.DataFrame:
     df["outgoing"] = changes["outgoing"]
 
     return df
+
+def create_population_columns(
+    location_info: pd.DataFrame,
+    location_bikes: pd.DataFrame) -> pd.DataFrame:
+    #TODO DESCRIPTION
+
+    df = location_bikes
+
+    df["uid"] = df["uid"].astype(str)
+    location_info["uid"] = location_info["uid"].astype(str)
+
+    df = df.merge(location_info[["uid", "no_racks"]],
+        on = "uid",
+        how = "left"
+        )
+    
+    no_rows = df.shape[0]
+
+    no_bikes = []
+    bikes_at_stations = df["bikes_at_station"]
+    # Calculate how many bikes there are at a station at any point
+    for ix in range(no_rows):
+        no_bikes.append(len(bikes_at_stations.iloc[ix]))
+
+    # Compare that to number of racks
+    df["no_bikes"] = no_bikes 
+    df["population_prop"] = df["no_bikes"] / df["no_racks"]
+
+    # Retain only new information; prevents errors when expanding to join location metadata
+    df = df.drop(["no_racks"], axis = 1)
+
+    return df
