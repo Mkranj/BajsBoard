@@ -75,7 +75,6 @@ bike_data = create_changes_columns(bike_data)
 
 # Mičemo prve opažene retke, koji nužno imaju NaN changes jer nema ranijeg vremena za usporediti koji su bicikli prisutni
 bike_data = bike_data.query("changes.notna()")
-bike_data
 ```
 
 ```{python}
@@ -93,8 +92,7 @@ locations = gather_bajs_locations(data_timepoints[-1])
 
 ```{python}
 # Info o broju bicikala naspram broju mjesta u svakom trenutku
-population_data = create_population_columns(locations, bike_data)
-population_data
+bike_data = create_population_columns(locations, bike_data)
 ```
 
 ```{python}
