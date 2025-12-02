@@ -12,11 +12,11 @@ def plot_hourly_bar(station_data: pd.DataFrame, changes_type: str, ax: Optional[
     if ax is None:
         fig, ax = plt.subplots()
     
-    if changes_type == "total":
-        columns = ["changes"]
+    if changes_type == "out":
+        columns = ["outgoing"]
         stack = False
     elif changes_type == "in/out":
-        columns = ["incoming", "outgoing"]
+        columns = ["outgoing", "incoming"]
         stack = True
 
     station_data.plot(kind = "bar",
@@ -32,7 +32,7 @@ def plot_hourly_bar(station_data: pd.DataFrame, changes_type: str, ax: Optional[
     if changes_type == "total":
         ax.get_legend().remove()
     elif changes_type == "in/out":
-        ax.legend(labels = ["Dolazni", "Odlazni"])
+        ax.legend(labels = ["Odlazni", "Dolazni"])
 
 
     return ax
@@ -41,7 +41,7 @@ def plot_weekday_bar(station_data: pd.DataFrame, ax: Optional[Axes] = None) -> A
     if ax is None:
         fig, ax = plt.subplots()
 
-    columns = ["changes"]
+    columns = ["outgoing"]
     
     station_data.plot(kind = "bar",
         y = columns, 

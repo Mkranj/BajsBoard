@@ -96,9 +96,11 @@ total_changes = total_changes.rename({"changes":"total_changes"}, axis = 1)
 
 ```{python}
 # Prosječni broj korištenja po danu, + težinski prosjek s obzirom na broj mjesta za bicikle
+# korištenjem smatramo ODLASKE sa stanica! Brojanje i dolazaka i odlazaka nam zapravo
+# duplira realan broj vožnji
 
 locations_changes = locations.join(total_changes, on = "uid")
-locations_changes["daily_avg"] = locations_changes["total_changes"] / no_days
+locations_changes["daily_avg"] = locations_changes["outgoing"] / no_days
 locations_changes["weighted_changes"] = locations_changes["daily_avg"] / locations_changes["no_racks"]
 ```
 
@@ -137,7 +139,7 @@ po_satu = create_hourly_df(bike_data).groupby(["hour"]).sum()
 
 po_danu = create_weekday_df(bike_data).groupby(["wday"]).sum()
 
-_ = plot_hourly_bar(po_satu, changes_type = "total")
+_ = plot_hourly_bar(po_satu, changes_type = "out")
 ```
 
 Na sljedećoj slici prikazane su varijacije u korištenju bicikala ovisno o danu u tjednu.
