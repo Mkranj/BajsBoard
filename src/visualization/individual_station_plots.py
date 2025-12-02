@@ -29,7 +29,7 @@ def plot_hourly_bar(station_data: pd.DataFrame, changes_type: str, ax: Optional[
     ax.set_xlabel(None)
     ax.set_ylabel("Prosječan broj uporaba u satu")
     
-    if changes_type == "total":
+    if changes_type == "out":
         ax.get_legend().remove()
     elif changes_type == "in/out":
         ax.legend(labels = ["Odlazni", "Dolazni"])

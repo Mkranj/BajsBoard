@@ -70,6 +70,7 @@ for i in range(len(data_timepoints)):
         bike_data = pd.concat([bike_data, timepoint_bikes])
 ```
 ```{python}
+# Dataframe gdje je svaki redak jedna postaja u jednoj točki mjerenja
 bike_data = create_changes_columns(bike_data)
 ```
 
@@ -89,14 +90,14 @@ locations = gather_bajs_locations(data_timepoints[-1])
 ```{python}
 # Ukupni broj korištenja za svaku postaju
 
-total_changes = bike_data.groupby("uid").sum(["changes"])
+total_changes = bike_data.groupby("uid").sum(["changes", "outgoing", "incoming"])
 total_changes = total_changes.rename({"changes":"total_changes"}, axis = 1)
 ```
 
 
 ```{python}
 # Prosječni broj korištenja po danu, + težinski prosjek s obzirom na broj mjesta za bicikle
-# korištenjem smatramo ODLASKE sa stanica! Brojanje i dolazaka i odlazaka nam zapravo
+# Realnim korištenjem smatramo ODLASKE sa stanica! Brojanje i dolazaka i odlazaka nam zapravo
 # duplira realan broj vožnji
 
 locations_changes = locations.join(total_changes, on = "uid")
