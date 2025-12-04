@@ -25,7 +25,7 @@ import yaml
 
 from data_cleaning.json_manipulation import load_json, trim_json_to_locations, gather_bajs_locations, get_bikes_in_stations, calculate_bike_changes, create_changes_columns, create_population_columns
 from visualization.station_map import populate_map_with_stations
-from visualization.individual_station_plots import plot_hourly_bar, plot_weekday_bar, stringify_plot, combined_plot_daily_weekly
+from visualization.individual_station_plots import plot_hourly_changes_bar, plot_weekday_bar, stringify_plot, combined_plot_daily_weekly
 from data_cleaning.data_wrangling import create_hourly_df, create_weekday_df
 ```
 
@@ -150,7 +150,7 @@ po_satu = create_hourly_df(bike_data).groupby(["hour"]).sum()
 
 po_danu = create_weekday_df(bike_data).groupby(["wday"]).sum()
 
-_ = plot_hourly_bar(po_satu, changes_type = "out")
+_ = plot_hourly_changes_bar(po_satu, changes_type = "out")
 ```
 
 Na sljedećoj slici prikazane su varijacije u korištenju bicikala ovisno o danu u tjednu.
