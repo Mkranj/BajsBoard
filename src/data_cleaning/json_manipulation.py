@@ -140,7 +140,14 @@ def calculate_bike_changes(earlier_bikes: pd.Series, later_bikes: pd.Series) -> 
     }
 
 def create_changes_columns(location_bikes: pd.DataFrame) -> pd.DataFrame:
-    #TODO DESCRIPTION
+    '''
+    Create new columns counting total, incoming, outgoing changes
+
+    Args:
+        location_bikes: A dataframe containing bike IDs for each location, at each timepoint (columns ["uid", "time", "bikes_at_station"])
+
+    Returns: Original dataframe with 3 new columns ["changes", "incoming", "outgoing"]
+    '''
 
     # Sorting to ensure lags refer to exactly the first earlier observed time
     df = location_bikes.sort_values(["time", "uid"])
@@ -174,7 +181,15 @@ def create_changes_columns(location_bikes: pd.DataFrame) -> pd.DataFrame:
 def create_population_columns(
     location_info: pd.DataFrame,
     location_bikes: pd.DataFrame) -> pd.DataFrame:
-    #TODO DESCRIPTION
+    '''
+    Create new columns counting number of bikes present and proportion of bikes to racks at any timepoint
+    
+    Args:
+        location_info: A dataframe with info about number of racks for each location (columns ["uid", "no_racks"])
+        location_bikes: A dataframe containing bike IDs for each location, at each timepoint (columns ["uid", "time", "bikes_at_station"])
+
+    Returns: Original `location_bikes` dataframe with 2 new columns ["no_bikes", "population_prop"]
+    '''
 
     df = location_bikes
 
