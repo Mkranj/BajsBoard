@@ -9,6 +9,21 @@ import base64
 from io import BytesIO
 
 def plot_hourly_changes_bar(station_data: pd.DataFrame, changes_type: str, ax: Optional[Axes] = None) -> Axes:
+    '''
+    Create a bar chart with average hourly changes.
+
+    Changes type "out" plots only outgoing changes, while type "in/out" creates a stacked bar chart with
+    incoming changes stacked on top of outgoing.
+
+    The station_data should either be filtered to a single station, or aggregated for all stations total.
+
+    Args:
+        station_data: a dataframe grouped by hour (with hours as index)
+        changes_type: ["out", "in/out"]. Whether to plot only outgoing or outgoing and incoming changes.
+        ax: Optional Axes object. If provided, the plot will be added to that specific ax, allowing multiple axes to be combined in a single figure.
+
+    Returns: Axes object with bar chart information.
+    '''
     if ax is None:
         fig, ax = plt.subplots()
     
@@ -38,6 +53,17 @@ def plot_hourly_changes_bar(station_data: pd.DataFrame, changes_type: str, ax: O
     return ax
 
 def plot_weekday_bar(station_data: pd.DataFrame, ax: Optional[Axes] = None) -> Axes:
+    '''
+    Create a bar chart with average changes for each weekday.
+
+    The station_data should either be filtered to a single station, or aggregated for all stations total.
+
+    Args:
+        station_data: a dataframe grouped by wday (0-6, as index)
+        ax: Optional Axes object. If provided, the plot will be added to that specific ax, allowing multiple axes to be combined in a single figure.
+
+    Returns: Axes object with bar chart information.
+    '''
     if ax is None:
         fig, ax = plt.subplots()
 
@@ -56,7 +82,19 @@ def plot_weekday_bar(station_data: pd.DataFrame, ax: Optional[Axes] = None) -> A
 
     return ax
 
-def combined_plot_daily_weekly(station_data_hourly: pd.DataFrame, station_data_daily: pd.DataFrame) -> (Figure, Axes):
+def combined_plot_daily_weekly(station_data_hourly: pd.DataFrame, station_data_daily: pd.DataFrame) -> tuple[Figure, Axes]:
+    '''
+    Create a chart with hourly barchart on the left and weekday bar chart on the right.
+
+    The hourly bar chart is stacked, with outgoing changes on the bottom and incoming on top.
+    The station_data should either be filtered to a single station, or aggregated for all stations total.
+
+    Args:
+        station_data_hourly: a dataframe grouped by hour (with hours as index)
+        station_data_daily: a dataframe grouped by wday (0-6, as index)
+        
+    Returns: (Figure, Axes) tuple. The figure is the combined chart.
+    '''
     fig, ax = plt.subplots(nrows = 1, ncols = 2, figsize = (12, 4))
 
     _ = plot_hourly_changes_bar(station_data_hourly, changes_type = "in/out", ax = ax[0])
@@ -65,7 +103,15 @@ def combined_plot_daily_weekly(station_data_hourly: pd.DataFrame, station_data_d
     plt.close(fig)
     return (fig, ax)
 
-def stringify_plot(plot: plt.axes):
+def stringify_plot(plot: Axes) -> str: 
+    '''
+    Turn a plot into a <img> tag with the base64-encoded string representation of the plot.
+
+    Args:
+        plot: Axes of a chart to be stringified.
+        
+    Returns: a string containing a <img> HTML tag, to be used as popup content.
+    '''
     buf = BytesIO()
     plot.savefig(buf, format='png', bbox_inches='tight')
     buf.seek(0)
