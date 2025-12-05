@@ -4,6 +4,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+from textwrap import fill
+
 
 import base64
 from io import BytesIO
@@ -124,7 +126,9 @@ def stringify_plot(plot: Axes) -> str:
 
     return html
 
-def station_population_boxplots(population_df: pd.DataFrame, locations_df: pd.DataFrame, station_uids: list) -> Axes:
+
+def station_population_boxplots(population_df: pd.DataFrame, locations_df: pd.DataFrame, station_uids: list,
+    text_wrap_chars: int = 22) -> Axes:
     plot_data = population_df[population_df["uid"].isin(station_uids)].merge(locations_df, on = "uid")
 
     # proporcije u postotke
@@ -139,5 +143,11 @@ def station_population_boxplots(population_df: pd.DataFrame, locations_df: pd.Da
     # referentne crte za 0% i 100%
     ax.axhline(0, ls="--", alpha = 0.3)
     ax.axhline(100, ls="--", alpha = 0.3)
+
+    ax.set_xlabel(None)
+    ax.set_ylabel("% bicikala od dostupnih mjesta")
+    ax.set_xticks(order_names)
+    # insert newlines after a certain amount of characters
+    ax.set_xticklabels([fill(name, text_wrap_chars) for name in order_names])
 
     return ax
