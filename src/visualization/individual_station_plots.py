@@ -123,3 +123,21 @@ def stringify_plot(plot: Axes) -> str:
     """
 
     return html
+
+def station_population_boxplots(population_df: pd.DataFrame, locations_df: pd.DataFrame, station_uids: list) -> Axes:
+    plot_data = population_df[population_df["uid"].isin(station_uids)].merge(locations_df, on = "uid")
+
+    # proporcije u postotke
+    plot_data["population_prop"] *= 100
+    
+    # imena stanica - po dobivenom redoslijedu
+    order_names = locations_df[locations_df["uid"].isin(station_uids)]
+    order_names = order_names.set_index("uid").reindex(station_uids)["name"].to_list()
+
+    ax = sns.boxplot(data = plot_data, y = "population_prop", x = "name", order = order_names)
+
+    # referentne crte za 0% i 100%
+    ax.axhline(0, ls="--", alpha = 0.3)
+    ax.axhline(100, ls="--", alpha = 0.3)
+
+    return ax

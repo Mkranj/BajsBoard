@@ -46,3 +46,18 @@ def create_weekday_df(timepoints_df: pd.DataFrame) -> pd.DataFrame:
     weekdaily = weekdaily.reindex(days_index, fill_value = 0)
 
     return weekdaily
+
+
+def get_population_extremes(population_df: pd.DataFrame, 
+    n_top: int = 3, n_bottom: int = 3) -> dict:
+    '''
+    DESCRIPTION
+    '''
+
+    stations_population = population_df.groupby(["uid"]).median(["population_prop"]).sort_values("population_prop", ascending = False)
+
+    pop_high = stations_population.head(n_top)
+    pop_low = stations_population.tail(n_bottom)
+
+    uids = pop_high.index.to_list() + pop_low.index.to_list()
+    return uids
