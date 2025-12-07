@@ -202,13 +202,34 @@ Najmanje korištene postaje:
 postaje_prikaz.sort_values("Korištenja dnevno",  ascending = True).head(10)
 ```
 
+### Napučenost postaja
+
 ```{python}
 # Podaci o napučenosti postaja - kada je prisutno više bicikala od mjesta, kada nema bicikala na postaji
 population_data = create_population_columns(locations, bike_data)
 ```
 
 ```{python}
-ekstremi_napucenosti = get_population_extremes(population_data, n_top = 4, n_bottom = 4)
+uid_visoka_napucenost = get_population_extremes(population_data, n_top = 5, n_bottom = 0)
+uid_niska_napucenost = get_population_extremes(population_data, n_top = 0, n_bottom = 5)
+```
+
+Na sljedećim grafikonima prikazane je pregled napučenosti izdvojenih postaja. Napučenost je 100% kada se na postaji nalazi broj bicikala jednak broju mjesta za bicikle. Ako su ostavljeni dodatni bicikli napučenost je preko 100%, a 0% označava da nije prisutan ni jedan bicikl na postaji.  
+Konkretna frekvencija opaženih stanja nije korisna informacija jer ovisi o broju dana za koje su prikupljane informacije, ali i o učestalosti prikupljanja informacija - da se podaci prikupljaju 10 puta na sat sve bi frekvencije bile oko 10 puta veće. Zato se za ove preglede koriste kockasti dijagrami. Obojene *kutije* na dijagramu označavaju da se 50% od svih opaženih stanja na pojedinoj postaji nalazi u rasponu koji obuhvaća visina kocke, a crta unutar kocke označava medijan napučenosti postaje. Dodatne linije izvan kutije (engl. *whiskers*) označavaju veličinu raspona u kojemu se nalazi >99% opaženih stanja, uz eventualne ekstremne vrijednosti označene kružićima.  
+
+Prvo će se prikazati pet postaja s najvišim medijanom napučenosti. Ako su na grafikonu cijele kutije iznad vrijednosti 100%, tada su ove postaje vrlo često prenapučene pa korisnici ne mogu ostaviti bicikle na predviđenim mjestima jer su sva već zauzeta. Povećanje broja dostupnih mjesta smanjilo bi takve situacije.  
+
+```{python}
+plt.figure(figsize=(15,5))
+station_population_boxplots(population_data, locations, uid_visoka_napucenost)
+```
+
+Na sljedećem grafikonu prikazano je pet postaja s najnižim medijanom napučenosti. Relativno nizak medijan je zapravo idealno stanje za postaju - označava da je u svakom vremenu dostupan određen broj bicikala za korisnike koji žele putovati na drugu postaju, kao i određen broj slobodnih mjesta za korisnike koji ovdje trebaju ostaviti bicikl.  
+Problematične postaje su one kod kojih dodatni dio raspona ispod kutije, ili čak sama kutija, dotiče granicu od 0%. To znači da znatnu proporciju vremena na toj stanici nije dostupan ni jedan Bajs bicikl. Korisnici se tada mogu naći u problematičnoj situaciji da **moraju odustati od planirane rute** jer na početnoj postaji nema bicikala koje mogu uzeti, zbog čega sustav Bajsa gubi potencijalne vožnje. Dodatni broj bicikala na tim postajama mogao bi spriječiti takve situacije.  
+
+```{python}
+plt.figure(figsize=(15,5))
+station_population_boxplots(population_data, locations, uid_niska_napucenost)
 ```
 
 ## Interaktivna mapa postaja
@@ -243,6 +264,7 @@ circles = populate_map_with_stations(m,
 
 
 ```{python}
+#| eval: true
 for i in range(len(circles)):
     circ = circles[i]
 
