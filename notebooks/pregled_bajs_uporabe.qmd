@@ -214,8 +214,8 @@ uid_visoka_napucenost = get_population_extremes(population_data, n_top = 5, n_bo
 uid_niska_napucenost = get_population_extremes(population_data, n_top = 0, n_bottom = 5)
 ```
 
-Na sljedećim grafikonima prikazane je pregled napučenosti izdvojenih postaja. Napučenost je 100% kada se na postaji nalazi broj bicikala jednak broju mjesta za bicikle. Ako su ostavljeni dodatni bicikli napučenost je preko 100%, a 0% označava da nije prisutan ni jedan bicikl na postaji.  
-Konkretna frekvencija opaženih stanja nije korisna informacija jer ovisi o broju dana za koje su prikupljane informacije, ali i o učestalosti prikupljanja informacija - da se podaci prikupljaju 10 puta na sat sve bi frekvencije bile oko 10 puta veće. Zato se za ove preglede koriste kockasti dijagrami. Obojene *kutije* na dijagramu označavaju da se 50% od svih opaženih stanja na pojedinoj postaji nalazi u rasponu koji obuhvaća visina kocke, a crta unutar kocke označava medijan napučenosti postaje. Dodatne linije izvan kutije (engl. *whiskers*) označavaju veličinu raspona u kojemu se nalazi >99% opaženih stanja, uz eventualne ekstremne vrijednosti označene kružićima.  
+Na sljedećim grafikonima prikazan je pregled napučenosti izdvojenih postaja. Napučenost je 100% kada se na postaji nalazi broj bicikala jednak broju mjesta za bicikle. Ako su ostavljeni dodatni bicikli napučenost je preko 100%, a 0% označava da nije prisutan ni jedan bicikl na postaji.  
+Obojene *kutije* na dijagramu označavaju da se 50% od svih opaženih stanja na pojedinoj postaji nalazi u tom rasponu, a crta unutar kocke označava medijan napučenosti postaje. Dodatne linije izvan kutije (engl. *whiskers*) označavaju veličinu raspona u kojemu se nalazi >99% opaženih stanja, uz eventualne ekstremne vrijednosti označene kružićima.  
 
 Prvo će se prikazati pet postaja s najvišim medijanom napučenosti. Ako su na grafikonu cijele kutije iznad vrijednosti 100%, tada su ove postaje vrlo često prenapučene pa korisnici ne mogu ostaviti bicikle na predviđenim mjestima jer su sva već zauzeta. Povećanje broja dostupnih mjesta smanjilo bi takve situacije.  
 
