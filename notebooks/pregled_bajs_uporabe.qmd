@@ -48,6 +48,10 @@ scraped_datetimes = [datetime.strptime(filename[5:-5], "%d-%m-%Y_%H-%M-%S") for 
 scraped_datetimes = [date + timedelta(hours = 1) for date in scraped_datetimes]
 ```
 
+```{python}
+# files aren't loaded in order, find the latest datetime
+latest_dt = scraped_datetimes.index(max(scraped_datetimes))
+```
 
 ```{python}
 data_timepoints = [
@@ -88,7 +92,7 @@ no_days = (last_date - first_date).days
 
 ```{python}
 # Info o postajama, na temelju posljednjeg dohvata podataka
-locations = gather_bajs_locations(data_timepoints[-1])
+locations = gather_bajs_locations(data_timepoints[latest_dt])
 ```
 
 ```{python}
